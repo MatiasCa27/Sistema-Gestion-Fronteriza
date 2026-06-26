@@ -27,6 +27,8 @@ import ProcedureStatus from './components/ProcedureStatus';
 import SagInspectorPanel from './components/SagInspectorPanel';
 import CustomsOfficerPanel from './components/CustomsOfficerPanel';
 import FinalResult from './components/FinalResult';
+import PdiOfficerPanel from './components/PdiOfficerPanel';
+import AdminPanel from './components/AdminPanel';
 
 export default function App() {
   // Initialization state
@@ -76,6 +78,12 @@ export default function App() {
     } else if (role === 'aduana') {
       setCurrentTraveler(null);
       setCurrentScreen('aduana-panel');
+    } else if (role === 'pdi') {
+      setCurrentTraveler(null);
+      setCurrentScreen('pdi-panel');
+    } else if (role === 'admin') {
+      setCurrentTraveler(null);
+      setCurrentScreen('admin-panel');
     }
   };
 
@@ -103,6 +111,12 @@ export default function App() {
     } else if (role === 'aduana') {
       setCurrentTraveler(null);
       setCurrentScreen('aduana-panel');
+    } else if (role === 'pdi') {
+      setCurrentTraveler(null);
+      setCurrentScreen('pdi-panel');
+    } else if (role === 'admin') {
+      setCurrentTraveler(null);
+      setCurrentScreen('admin-panel');
     }
   };
 
@@ -110,6 +124,7 @@ export default function App() {
   const handleResetDatabase = () => {
     localStorage.removeItem('aduana_travelers');
     localStorage.removeItem('aduana_tramites');
+    localStorage.removeItem('aduana_profiles');
     initStorage();
     reloadFromDb();
     
@@ -167,14 +182,14 @@ export default function App() {
     let updatedDocsStatus = tramite.docsStatus;
 
     if (sagDone && pdiDone && vehDone) {
-      // All done! If the status was in the register/individual phase, push it to SAG Review
+      // All done! If the status was in the register/individual phase, push it to PDI Review
       if (
         tramite.status === 'Registro' || 
         tramite.status === 'Declaración SAG' || 
         tramite.status === 'Declaración PDI' || 
         tramite.status === 'Vehículo'
       ) {
-        updatedStatus = 'Revisión SAG';
+        updatedStatus = 'Revisión PDI';
         updatedDocsStatus = 'Pendiente de revisión';
       } else {
         updatedDocsStatus = 'Completa';
@@ -224,7 +239,7 @@ export default function App() {
       />
 
       {/* Main Banner / Brand Header (Only visible when not logged in to make login screen stand out) */}
-      {currentScreen !== 'login' && currentScreen !== 'register' && (
+      {currentScreen !== 'login' && currentScreen !== 'register' && currentScreen !== 'admin-panel' && (
         <header className="bg-[#004a99] text-white flex items-center justify-between px-6 py-4 shadow-md shrink-0" id="main-brand-header">
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -253,6 +268,16 @@ export default function App() {
                 <div className="hidden sm:block text-right">
                   <p className="text-sm font-bold text-white">Funcionario Aduana</p>
                   <p className="text-[10px] text-blue-200 uppercase tracking-widest font-mono">Servicio Nacional de Aduanas</p>
+                </div>
+              ) : currentRole === 'pdi' ? (
+                <div className="hidden sm:block text-right">
+                  <p className="text-sm font-bold text-white">Funcionario PDI</p>
+                  <p className="text-[10px] text-blue-200 uppercase tracking-widest font-mono">Policía de Investigaciones</p>
+                </div>
+              ) : currentRole === 'admin' ? (
+                <div className="hidden sm:block text-right">
+                  <p className="text-sm font-bold text-white">Administrador</p>
+                  <p className="text-[10px] text-blue-200 uppercase tracking-widest font-mono">Control del Sistema</p>
                 </div>
               ) : null}
               
@@ -362,17 +387,34 @@ export default function App() {
             onUpdateTramite={handleUpdateTramiteFromPanels}
           />
         )}
+
+        {/* PDI Inspector flows */}
+        {currentRole === 'pdi' && (
+          <PdiOfficerPanel
+            tramites={allTramites}
+            onUpdateTramite={handleUpdateTramiteFromPanels}
+          />
+        )}
+
+        {/* Admin Panel flows */}
+        {currentRole === 'admin' && (
+          <AdminPanel
+            onLogout={handleLogout}
+          />
+        )}
       </main>
 
       {/* Shared Professional Footer */}
-      <footer className="bg-white border-t border-gray-150 py-4 px-6 text-center text-[10px] text-gray-400 font-medium">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© 2026 Servicio Nacional de Aduanas • SAG • PDI • República de Chile</p>
-          <p className="flex items-center gap-1.5 font-mono">
-            <span>Paso Fronterizo Los Libertadores • Sistema Oficial</span>
-          </p>
-        </div>
-      </footer>
+      {currentScreen !== 'admin-panel' && (
+        <footer className="bg-white border-t border-gray-150 py-4 px-6 text-center text-[10px] text-gray-400 font-medium">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>© 2026 Servicio Nacional de Aduanas • SAG • PDI • República de Chile</p>
+            <p className="flex items-center gap-1.5 font-mono">
+              <span>Paso Fronterizo Los Libertadores • Sistema Oficial</span>
+            </p>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

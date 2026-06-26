@@ -3,11 +3,51 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { TravelerProfile, Tramite, TramiteStatus } from './types';
+import { TravelerProfile, Tramite, TramiteStatus, SystemProfile } from './types';
 import { INITIAL_TRAVELERS, INITIAL_TRAMITES } from './mockData';
 
 const KEY_TRAVELERS = 'aduana_travelers';
 const KEY_TRAMITES = 'aduana_tramites';
+const KEY_PROFILES = 'aduana_profiles';
+
+const DEFAULT_PROFILES: SystemProfile[] = [
+  {
+    id: 'prof-1',
+    fullName: 'Administrador General',
+    email: 'admin@aduana.cl',
+    password: 'password123',
+    role: 'admin',
+    status: 'Activo',
+    dateCreated: '2026-06-25T10:00:00Z'
+  },
+  {
+    id: 'prof-2',
+    fullName: 'Claudio Almonacid',
+    email: 'claudio.pdi@pdi.cl',
+    password: 'password123',
+    role: 'pdi',
+    status: 'Activo',
+    dateCreated: '2026-06-25T11:00:00Z'
+  },
+  {
+    id: 'prof-3',
+    fullName: 'Inspector SAG Central',
+    email: 'sag@aduana.cl',
+    password: 'password123',
+    role: 'sag',
+    status: 'Activo',
+    dateCreated: '2026-06-25T12:00:00Z'
+  },
+  {
+    id: 'prof-4',
+    fullName: 'Funcionario Aduana Principal',
+    email: 'aduana@aduana.cl',
+    password: 'password123',
+    role: 'aduana',
+    status: 'Activo',
+    dateCreated: '2026-06-25T13:00:00Z'
+  }
+];
 
 export function initStorage(): void {
   if (!localStorage.getItem(KEY_TRAVELERS)) {
@@ -16,6 +56,19 @@ export function initStorage(): void {
   if (!localStorage.getItem(KEY_TRAMITES)) {
     localStorage.setItem(KEY_TRAMITES, JSON.stringify(INITIAL_TRAMITES));
   }
+  if (!localStorage.getItem(KEY_PROFILES)) {
+    localStorage.setItem(KEY_PROFILES, JSON.stringify(DEFAULT_PROFILES));
+  }
+}
+
+export function getProfiles(): SystemProfile[] {
+  initStorage();
+  const data = localStorage.getItem(KEY_PROFILES);
+  return data ? JSON.parse(data) : [];
+}
+
+export function saveProfiles(profiles: SystemProfile[]): void {
+  localStorage.setItem(KEY_PROFILES, JSON.stringify(profiles));
 }
 
 export function getTravelers(): TravelerProfile[] {

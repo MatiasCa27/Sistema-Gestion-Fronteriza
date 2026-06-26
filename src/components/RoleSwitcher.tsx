@@ -11,7 +11,9 @@ import {
   UserSquare2, 
   RefreshCw, 
   Settings,
-  HelpCircle
+  HelpCircle,
+  Fingerprint,
+  ShieldCheck
 } from 'lucide-react';
 import { UserRole, TravelerProfile } from '../types';
 
@@ -106,6 +108,32 @@ export default function RoleSwitcher({
             }`}
           >
             <UserSquare2 className="w-3.5 h-3.5" /> Funcionario Aduana
+          </button>
+
+          {/* PDI Switch */}
+          <button
+            type="button"
+            onClick={() => onSwitchRole('pdi')}
+            className={`px-3 py-1.5 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              currentRole === 'pdi' 
+                ? 'bg-indigo-600 border-indigo-500 text-white' 
+                : 'bg-slate-850 border-slate-750 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Fingerprint className="w-3.5 h-3.5" /> Funcionario PDI
+          </button>
+
+          {/* Admin Switch */}
+          <button
+            type="button"
+            onClick={() => onSwitchRole('admin')}
+            className={`px-3 py-1.5 rounded-lg border font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              currentRole === 'admin' 
+                ? 'bg-slate-700 border-slate-600 text-white' 
+                : 'bg-slate-850 border-slate-750 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" /> Administrador
           </button>
         </div>
 
