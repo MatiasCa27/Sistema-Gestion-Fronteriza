@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type UserRole = 'viajero' | 'sag' | 'aduana';
+export type UserRole = 'viajero' | 'sag' | 'aduana' | 'pdi' | 'admin';
 
 export interface TravelerProfile {
   id: string;
@@ -37,6 +37,9 @@ export interface PdiDeclarationType {
   stayDays: string;
   docType: 'RUT' | 'Pasaporte' | 'DNI';
   docNumber: string;
+  status?: 'Pendiente' | 'Aprobado' | 'Rechazado';
+  identityValidated?: boolean;
+  comments?: string;
 }
 
 export interface VehicleRegistrationType {
@@ -54,6 +57,7 @@ export type TramiteStatus =
   | 'Declaración SAG' 
   | 'Declaración PDI' 
   | 'Vehículo' 
+  | 'Revisión PDI'
   | 'Revisión SAG' 
   | 'Revisión Aduana' 
   | 'Autorizado' 
@@ -75,3 +79,14 @@ export interface Tramite {
   finalDecisionReason?: string;
   dateCreated: string;
 }
+
+export interface SystemProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  password?: string;
+  role: UserRole;
+  status: 'Activo' | 'Inactivo';
+  dateCreated: string;
+}
+

@@ -57,20 +57,28 @@ export default function ProcedureStatus({ tramite, onBack, onNavigateToResult }:
         badge: 'Faltan documentos.'
       };
     }
+    if (tramite.status === 'Revisión PDI') {
+      return {
+        title: 'Pendiente de Validación por PDI',
+        desc: 'Toda su documentación ha sido cargada correctamente. El Funcionario de la Policía de Investigaciones (PDI) está revisando sus datos migratorios y debe validar su identidad biométricamente.',
+        style: 'bg-indigo-50 border-indigo-200 text-indigo-800',
+        badge: 'En revisión de PDI.'
+      };
+    }
     if (tramite.status === 'Revisión SAG') {
       return {
         title: 'Pendiente de Revisión por SAG',
-        desc: 'Toda su documentación ha sido cargada correctamente. El Inspector del Servicio Agrícola y Ganadero (SAG) está revisando sus declaraciones de salud animal y vegetal.',
-        style: 'bg-blue-50 border-blue-200 text-blue-800',
-        badge: 'Documentación completa. Pendiente de revisión.'
+        desc: 'El control migratorio de PDI ha sido validado correctamente. El Inspector del Servicio Agrícola y Ganadero (SAG) está revisando sus declaraciones de salud animal y vegetal.',
+        style: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+        badge: 'Aprobado por PDI. En revisión SAG.'
       };
     }
     if (tramite.status === 'Revisión Aduana') {
       return {
         title: 'Pendiente de Revisión por Aduana',
-        desc: 'La inspección sanitaria del SAG ha finalizado. El Funcionario de Aduana está verificando los documentos de identidad y vehiculares para emitir la resolución final.',
+        desc: 'Las inspecciones de PDI y de sanidad del SAG han finalizado con éxito. El Funcionario de Aduana está verificando los documentos de identidad y vehiculares para emitir la resolución final.',
         style: 'bg-blue-50 border-blue-200 text-blue-800',
-        badge: 'Declaración aprobada por SAG. En revisión de aduana.'
+        badge: 'Aprobado por PDI y SAG. En revisión de aduana.'
       };
     }
 
@@ -93,8 +101,8 @@ export default function ProcedureStatus({ tramite, onBack, onNavigateToResult }:
     { 
       name: 'Revisión Autoridades', 
       completed: allFormsDone, 
-      inProgress: allFormsDone && (tramite.status === 'Revisión SAG' || tramite.status === 'Revisión Aduana'),
-      label: '⏳ Revisión Aduana' 
+      inProgress: allFormsDone && (tramite.status === 'Revisión PDI' || tramite.status === 'Revisión SAG' || tramite.status === 'Revisión Aduana'),
+      label: '⏳ Revisión Autoridades' 
     },
     { 
       name: 'Resolución Final', 

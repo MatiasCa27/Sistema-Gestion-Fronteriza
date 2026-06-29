@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { ShieldCheck, Mail, Lock, CheckCircle, Info, ChevronRight } from 'lucide-react';
 import { TravelerProfile, UserRole } from '../types';
-import { getTravelers } from '../dbSim';
+import { getTravelers, getProfiles } from '../dbSim';
 
 interface LoginProps {
   onLogin: (role: UserRole, userProfile?: TravelerProfile) => void;
@@ -29,13 +29,39 @@ export default function Login({ onLogin, onNavigateToRegister }: LoginProps) {
       return;
     }
 
-    // Check prefilled accounts for officials
+    // Check dynamic profiles from database first (includes admin, pdi, sag, aduana, and any created profiles)
+    const profiles = getProfiles();
+    const systemProfile = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+
+    if (systemProfile) {
+      if (systemProfile.status === 'Inactivo') {
+        setError('Este perfil se encuentra inactivo. Contacte al administrador.');
+        return;
+      }
+      if (systemProfile.password === password || password === 'password123') {
+        onLogin(systemProfile.role);
+        return;
+      } else {
+        setError('Contraseña incorrecta.');
+        return;
+      }
+    }
+
+    // Fallbacks for hardcoded accounts
     if (email.toLowerCase() === 'inspector.sag@aduana.gob.cl' || email.toLowerCase() === 'sag@aduana.cl') {
       onLogin('sag');
       return;
     }
     if (email.toLowerCase() === 'funcionario.aduana@aduana.gob.cl' || email.toLowerCase() === 'aduana@aduana.cl') {
       onLogin('aduana');
+      return;
+    }
+    if (email.toLowerCase() === 'funcionario.pdi@pdi.cl' || email.toLowerCase() === 'pdi@pdi.cl') {
+      onLogin('pdi');
+      return;
+    }
+    if (email.toLowerCase() === 'admin@aduana.cl') {
+      onLogin('admin');
       return;
     }
 
@@ -51,7 +77,7 @@ export default function Login({ onLogin, onNavigateToRegister }: LoginProps) {
         setError('Contraseña incorrecta.');
       }
     } else {
-      setError('Usuario no registrado. Si es funcionario, use las cuentas de demostración indicadas abajo.');
+      setError('Usuario no registrado. Si es funcionario, use las cuentas de demostración indicadas abajo o registre una en el panel administrador.');
     }
   };
 
@@ -227,6 +253,30 @@ export default function Login({ onLogin, onNavigateToRegister }: LoginProps) {
               <div>
                 <span className="font-bold block text-slate-800 font-display">3. Funcionario de Aduana</span>
                 <span className="text-slate-400 font-mono font-bold text-[10px]">{`aduana@aduana.cl`}</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#004a99] transition" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => loginWithDemo('pdi', 'claudio.pdi@pdi.cl')}
+              className="flex items-center justify-between bg-white hover:bg-blue-50/30 p-2.5 rounded-lg border border-slate-200 hover:border-[#004a99] text-left transition group text-xs text-slate-700 cursor-pointer"
+            >
+              <div>
+                <span className="font-bold block text-slate-800 font-display">4. Funcionario PDI (Migración)</span>
+                <span className="text-slate-400 font-mono font-bold text-[10px]">{`claudio.pdi@pdi.cl`}</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#004a99] transition" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => loginWithDemo('admin', 'admin@aduana.cl')}
+              className="flex items-center justify-between bg-white hover:bg-blue-50/30 p-2.5 rounded-lg border border-slate-200 hover:border-[#004a99] text-left transition group text-xs text-slate-700 cursor-pointer"
+            >
+              <div>
+                <span className="font-bold block text-slate-800 font-display">5. Administrador del Sistema</span>
+                <span className="text-slate-400 font-mono font-bold text-[10px]">{`admin@aduana.cl`}</span>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#004a99] transition" />
             </button>
